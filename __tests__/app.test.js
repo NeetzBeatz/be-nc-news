@@ -17,16 +17,16 @@ describe("All bad URLs", () => {
         .get("/api/notAnEnpoint")
         .expect(404)
         .then(({body}) => {
-            const {message} = body;
-            expect(message).toBe("endpoint not found")
+            const {msg} = body;
+            expect(msg).toBe("endpoint not found")
         })
     })
 })
 
-describe("Topics", () =>{
+describe("TOPICS", () =>{
     describe("GET", () => {
         describe("/api/topics", () => {
-            test("should respond with status code 200 and an array of topic objects with keys of 'slug' and 'description'", () => {
+            test("NOT PASSING should respond with status code 200 and an array of topic objects with keys of 'slug' and 'description'", () => {
                 return request(app)
                 .get("/api/topics")
                 .expect(200)
@@ -40,22 +40,63 @@ describe("Topics", () =>{
             });
 
         })
+    })
+})
 
-        describe("/api", () => {
-            test("responds with an object containing all available endpoints", () => {
+describe("/api", () => {
+        describe("GET", () => {
+        test("responds with an object containing all available endpoints", () => {
+            return request(app)
+            .get("/api")
+            .expect(200)
+            .then(({body}) => {
+                expect(body.endpoints).toEqual(endpoints)
+            })
+        })
+    })
+})
+
+
+describe("/api/articles/:article_id", () => {
+    describe("GET", () => {
+        describe("Status 200", () => {
+                test("responds with an article object when given a valid article_id. The object should have properties of: author, title, article_id, body, topic, created_at, votes and article_img_url", () => {
+                    return request(app)
+                    .get("/api/articles/1")
+                    .expect(200)
+                    .then((response) => {
+                        expect(response.body.article).toEqual({
+                            article_id: 1,
+                            title: 'Living in the shadow of a great man',
+                            topic: 'mitch',
+                            author: 'butter_bridge',
+                            body: 'I find this existence challenging',
+                            created_at: '2020-07-09T20:11:00.000Z',
+                            votes: 100,
+                            article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+                        })
+                    })
+                })
+            })
+
+        describe("Error handling", () => {
+            test("returns status code 400 when given an invalid article_id", () => {
                 return request(app)
-                .get("/api")
-                .expect(200)
+                .get("/api/articles/number-one-as-a-string")
+                .expect(400)
                 .then(({body}) => {
-                    console.log(body.endpoints)
-                    expect(body.endpoints).toEqual(endpoints)
+                    expect(body.msg).toBe("bad request")
+                })
+            })
+                    
+            test("returns status code 404 when given an article_id of the right data type that doesnt exist", () => {
+                return request(app)
+                .get("/api/articles/99")
+                .expect(404)
+                .then(({body}) => {
+                    expect(body.msg).toBe("no article found with an article_id of 99")
                 })
             })
         })
-
-
-
     })
-
-
 })
