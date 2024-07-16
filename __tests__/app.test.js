@@ -2,28 +2,14 @@ const request = require("supertest");
 const app = require("../app");
 const data = require("../db/data/test-data");
 const db = require("../db/connection");
-const seed = require("../db/seeds/seed")
+const seed = require("../db/seeds/seed");
+const endpoints = require("../endpoints.json")
 
 beforeEach(() => {
     return seed(data)
 });
 
 afterAll(() => db.end());
-
-/*
-Tests:
-
-    - isArray() check that an array is returned
-
-    - Should respond with status code 200 and an array of topic objects'
-
-    - should respond with status code 200 and an array of topic objects with keys of 'slug' and 'description'
-
-Error tests:
-
-    - catch all bad URLs
-    
-*/
 
 describe("All bad URLs", () => {
     test("All methods 404: responds with an error for an endpoint not found", () => {
@@ -54,5 +40,22 @@ describe("Topics", () =>{
             });
 
         })
+
+        describe("/api", () => {
+            test("responds with an object containing all available endpoints", () => {
+                return request(app)
+                .get("/api")
+                .expect(200)
+                .then(({body}) => {
+                    console.log(body.endpoints)
+                    expect(body.endpoints).toEqual(endpoints)
+                })
+            })
+        })
+
+
+
     })
+
+
 })

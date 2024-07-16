@@ -29,6 +29,7 @@
   "dependencies": {
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "fs": "^0.0.1-security",
     "node": "^18.20.4",
     "pg": "^8.12.0",
     "supertest": "^7.0.0"
