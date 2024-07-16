@@ -5,3 +5,4 @@ exports.fetchTopics = (request, response, next) => {
         return topics;
     });
 };
+
