@@ -56,47 +56,81 @@ describe("/api", () => {
     })
 })
 
-
-describe("/api/articles/:article_id", () => {
+describe("ARTICLES", () => {
     describe("GET", () => {
-        describe("Status 200", () => {
-                test("responds with an article object when given a valid article_id. The object should have properties of: author, title, article_id, body, topic, created_at, votes and article_img_url", () => {
-                    return request(app)
-                    .get("/api/articles/1")
-                    .expect(200)
-                    .then((response) => {
-                        expect(response.body.article).toEqual({
-                            article_id: 1,
-                            title: 'Living in the shadow of a great man',
-                            topic: 'mitch',
-                            author: 'butter_bridge',
-                            body: 'I find this existence challenging',
-                            created_at: '2020-07-09T20:11:00.000Z',
-                            votes: 100,
-                            article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+        describe("/api/articles/:article_id", () => {
+            describe("Status 200", () => {
+                    test("responds with an article object when given a valid article_id. The object should have properties of: author, title, article_id, body, topic, created_at, votes and article_img_url", () => {
+                        return request(app)
+                        .get("/api/articles/1")
+                        .expect(200)
+                        .then((response) => {
+                            expect(response.body.article).toEqual({
+                                article_id: 1,
+                                title: 'Living in the shadow of a great man',
+                                topic: 'mitch',
+                                author: 'butter_bridge',
+                                body: 'I find this existence challenging',
+                                created_at: '2020-07-09T20:11:00.000Z',
+                                votes: 100,
+                                article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+                            })
                         })
                     })
                 })
-            })
 
-        describe("Error handling", () => {
-            test("returns status code 400 when given an invalid article_id", () => {
-                return request(app)
-                .get("/api/articles/number-one-as-a-string")
-                .expect(400)
-                .then(({body}) => {
-                    expect(body.msg).toBe("bad request")
+            describe("Error handling", () => {
+                test("returns status code 400 when given an invalid article_id", () => {
+                    return request(app)
+                    .get("/api/articles/number-one-as-a-string")
+                    .expect(400)
+                    .then(({body}) => {
+                        expect(body.msg).toBe("bad request")
+                    })
                 })
-            })
-                    
-            test("returns status code 404 when given an article_id of the right data type that doesnt exist", () => {
-                return request(app)
-                .get("/api/articles/99")
-                .expect(404)
-                .then(({body}) => {
-                    expect(body.msg).toBe("no article found with an article_id of 99")
+                        
+                test("returns status code 404 when given an article_id of the right data type that doesnt exist", () => {
+                    return request(app)
+                    .get("/api/articles/99")
+                    .expect(404)
+                    .then(({body}) => {
+                        expect(body.msg).toBe("no article found with an article_id of 99")
+                    })
                 })
             })
         })
-    })
-})
+
+        /*
+        Tests:
+            - responds with an articles array of article objects containing all of the correct values: author, title, article_id, topic, created_at, votes, article_img_url, comment_count"
+        */
+
+        describe("/api/articles", () => {
+            describe("Status 200", () => {
+                test("responds with an articles array of article objects containing all of the correct values: author, title, article_id, topic, created_at, votes, article_img_url, comment_count", () => {
+                    return request(app)
+                    .get("/api/articles")
+                    .expect(200)
+                    .then(({body}) => {
+                        const responseData = body.articles
+                            responseData.forEach((article) => {
+                                const articleAtIndex0 = body.articles[0]
+                                expect(typeof responseData).toBe("object");
+                                expect(article).not.toHaveProperty("body");
+                                expect(articleAtIndex0).toMatchObject({
+                                    article_id: expect.any(Number),
+                                    title: expect.any(String),
+                                    topic: expect.any(String),
+                                    author: expect.any(String),
+                                    created_at: expect.any(String),
+                                    votes: expect.any(Number),
+                                    article_img_url: expect.any(String),
+                                    comment_count: expect.any(Number)
+                                });
+                        });
+                    });
+                });
+            });
+        });
+    });
+});
