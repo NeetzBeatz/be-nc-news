@@ -1,4 +1,4 @@
 node_modules
 .env.*
-api_articles.sql
-output_api_articles.txt
+ticket-6.sql
+ticket-6.txt
