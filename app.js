@@ -1,5 +1,5 @@
 const express = require("express");
-const {getTopics, getEndpoints, getArticleByID, getAllArticles} = require("./controllers/controllers");
+const {getTopics, getEndpoints, getArticleById, getAllArticles, getCommentsByArticleId} = require("./controllers/controllers");
 
 const app = express();
 
@@ -7,11 +7,11 @@ app.get("/api/topics", getTopics)
 
 app.get("/api", getEndpoints)
 
-app.get("/api/articles/:article_id", getArticleByID)
+app.get("/api/articles/:article_id", getArticleById)
 
 app.get("/api/articles", getAllArticles)
 
-
+app.get("/api/articles/:article_id/comments", getCommentsByArticleId)
 
 
 // To capture all bad URLs

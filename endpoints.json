@@ -13,8 +13,7 @@
     "description": "responds with an article object when given a valid article_id. The object should have properties of: author, title, article_id, body, topic, created_at, votes and article_img_url",
     "queries": [],
     "exampleResponse": {
-      "articles": [
-        {
+      "articles": {
           "article_id": 1,
           "title": "Living in the shadow of a great man",
           "topic": "mitch",
@@ -25,7 +24,6 @@
           "article_img_url":
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         }
-      ]
     }
   },
   "GET /api/articles": {
@@ -43,6 +41,22 @@
           "article_img_url":
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
           "comment_count": 6
+        }
+      ]
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "responds with an array of all comments for the given article sorted by date with the most recent comments first",
+    "queries": ["author", "topic", "article_id"],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 1,
+          "body": "I find this existence challenging",
+          "article_id": 1,
+          "author": "butter_bridge",
+          "votes": 100,
+          "created_at": 1594329060000
         }
       ]
     }

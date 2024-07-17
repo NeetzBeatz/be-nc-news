@@ -1,4 +1,4 @@
-const {fetchTopics, fetchArticleByID, fetchAllArticles} = require("../models/models");
+const {fetchTopics, fetchArticleById, fetchAllArticles, selectCommentsByArticleId} = require("../models/models");
 const endpoints = require("../endpoints.json")
 
 exports.getTopics  = (request, response, next) => {
@@ -13,9 +13,9 @@ exports.getEndpoints = (request, response, next) => {
         return response.status(200).send({endpoints : endpoints});
 };
 
-exports.getArticleByID = (request, response, next) => {
+exports.getArticleById = (request, response, next) => {
     const {article_id} = request.params
-        fetchArticleByID(article_id).then((article) => {
+        fetchArticleById(article_id).then((article) => {
             response.status(200).send({article : article})
         }).catch((err) => {
             next(err);
@@ -29,3 +29,16 @@ exports.getAllArticles = (request, response, next) => {
         next(err);
     });
 };
+
+exports.getCommentsByArticleId = (request, response, next) => {
+    const {article_id} = request.params
+    return fetchArticleById(article_id)
+    .then((article) => {
+        const fetchedArticleId = article.article_id
+    return selectCommentsByArticleId(article_id)
+    }).then((comments) => {
+        response.status(200).send({comments : comments})
+    }).catch((err) => {
+        next(err)
+    })
+}

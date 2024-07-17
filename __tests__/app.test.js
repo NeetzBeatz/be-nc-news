@@ -100,11 +100,6 @@ describe("ARTICLES", () => {
             })
         })
 
-        /*
-        Tests:
-            - responds with an articles array of article objects containing all of the correct values: author, title, article_id, topic, created_at, votes, article_img_url, comment_count"
-        */
-
         describe("/api/articles", () => {
             describe("Status 200", () => {
                 test("responds with an articles array of article objects containing all of the correct values: author, title, article_id, topic, created_at, votes, article_img_url, comment_count", () => {
@@ -132,5 +127,40 @@ describe("ARTICLES", () => {
                 });
             });
         });
+
+        describe("/api/articles/:article_id/comments", () => {
+            describe("Status 200", () => {
+                test("responds with an array of all comments for the given article sorted by date with the most recent comments first", () => {
+                    return request(app)
+                    .get("/api/articles/5/comments")
+                    .expect(200)
+                    .then(({body}) => {
+                        const commentsWithArticleId5 = body.comments
+                        expect(Array.isArray(commentsWithArticleId5)).toBe(true)
+                        expect(commentsWithArticleId5).toBeSortedBy("created_at", {descending : true})
+                        expect(commentsWithArticleId5).toMatchObject(
+                            [
+                            {
+                            comment_id: expect.any(Number),
+                            votes: expect.any(Number),
+                            created_at: expect.any(String),
+                            author: expect.any(String),
+                            body: expect.any(String),
+                            article_id: expect.any(Number)
+                        },
+                        {
+                            comment_id: expect.any(Number),
+                            votes: expect.any(Number),
+                            created_at: expect.any(String),
+                            author: expect.any(String),
+                            body: expect.any(String),
+                            article_id: expect.any(Number)
+                        }
+                    ]
+                    )
+                    })
+                })
+            })
+        })
     });
 });
