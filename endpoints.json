@@ -9,26 +9,28 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
-  "GET /api/articles": {
-    "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
+  "GET /api/articles/:article_id": {
+    "description": "responds with an article object when given a valid article_id. The object should have properties of: author, title, article_id, body, topic, created_at, votes and article_img_url",
+    "queries": [],
     "exampleResponse": {
       "articles": [
         {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": "2018-05-30T15:59:13.341Z",
-          "votes": 0,
-          "comment_count": 6
+          "article_id": 1,
+          "title": "Living in the shadow of a great man",
+          "topic": "mitch",
+          "author": "butter_bridge",
+          "body": "I find this existence challenging",
+          "created_at": 1594329060000,
+          "votes": 100,
+          "article_img_url":
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         }
       ]
     }
   },
-  "GET /api/articles/:article_id": {
-    "description": "serves an array of article objects with properties of: author, title, article_id, body, topic, created_at, votes and article_img_url",
-    "queries": [],
+  "GET /api/articles": {
+    "description": "serves an array of all articles",
+    "queries": ["author", "topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
@@ -36,12 +38,13 @@
           "title": "Seafood substitutions are increasing",
           "topic": "cooking",
           "author": "weegembump",
-          "body": "Text from the article..",
           "created_at": "2018-05-30T15:59:13.341Z",
           "votes": 0,
+          "article_img_url":
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
           "comment_count": 6
         }
       ]
     }
-}
+  }
 }

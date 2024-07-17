@@ -24,7 +24,8 @@
     "husky": "^8.0.3",
     "jest": "^27.5.1",
     "jest-extended": "^2.0.0",
-    "pg-format": "^1.0.4"
+    "pg-format": "^1.0.4",
+    "sorted": "^0.1.1"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
