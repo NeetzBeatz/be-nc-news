@@ -35,6 +35,7 @@ exports.getCommentsByArticleId = (request, response, next) => {
     return fetchArticleById(article_id)
     .then((article) => {
         const fetchedArticleId = article.article_id
+        if (fetchedArticleId !== [])
     return selectCommentsByArticleId(article_id)
     }).then((comments) => {
         response.status(200).send({comments : comments})

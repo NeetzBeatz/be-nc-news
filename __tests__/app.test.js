@@ -166,7 +166,45 @@ describe("GET", () =>{
                         ]);
                     });
                 });
+
+                // test("responds with an empty array when given a valid ID that has no associated comments", () => {
+                //     return request(app)
+                //     .get("/api/articles/2/comments")
+                //     .expect(200)
+                //     .then(({body}) => {
+                //         const comments = body.comments
+                //         console.log(body)
+                //         expect(comments).toEqual([])
+              
+                //     });
+                // });
+
             });
+
+            describe("Error handling", () => {
+                describe("status 400", () => {
+                    test("invalid article_id given - incorrect data type", () => {
+                        return request(app)
+                        .get("/api/articles/not-a-number/comments")
+                        .expect(400)
+                        .then(({body}) => {
+                            expect(body.msg).toBe("bad request")
+                        })
+                    });
+                })
+
+                describe("status 404", () => {
+                    test("returns status code 404 when given an article_id of the right data type that doesnt exist", () => {
+                        return request(app)
+                        .get("/api/articles/99/comments")
+                        .expect(404)
+                        .then(({body}) => {
+                            expect(body.msg).toBe("no article found with an article_id of 99")
+                        })
+                    });
+                })
+
+            })
         });
     });
 
