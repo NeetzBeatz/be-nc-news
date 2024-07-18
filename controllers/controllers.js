@@ -1,4 +1,4 @@
-const {fetchTopics, fetchArticleById, fetchAllArticles, selectCommentsByArticleId} = require("../models/models");
+const {fetchTopics, fetchArticleById, fetchAllArticles, selectCommentsByArticleId, joinCommentToArticle} = require("../models/models");
 const endpoints = require("../endpoints.json")
 
 exports.getTopics  = (request, response, next) => {
@@ -39,6 +39,16 @@ exports.getCommentsByArticleId = (request, response, next) => {
     }).then((comments) => {
         response.status(200).send({comments : comments})
     }).catch((err) => {
-        next(err)
-    })
-}
+        next(err);
+    });
+};
+
+exports.addCommentToArticle = (request, response, next) => {
+    const {article_id} = request.params;
+    const {username, body} = request.body;
+        return joinCommentToArticle(article_id, username, body).then((comment) => { 
+            response.status(201).send({comment : comment})
+        }).catch((err) => {
+            next(err);
+        });
+};

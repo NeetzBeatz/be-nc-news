@@ -63,5 +63,23 @@ exports.selectCommentsByArticleId = (article_id) => {
                     })
             }
         return result.rows;
-    })
+    });
+};
+
+exports.joinCommentToArticle = (article_id, username, body) => {
+    const sqlQuery = 'INSERT INTO comments (article_id, author, body) VALUES ($1, $2, $3) RETURNING *;'
+
+            return db.query("SELECT * FROM articles WHERE article_id = $1", [article_id]).then(({rows})=> {
+                if(rows.length === 0){
+                    return Promise.reject({
+                        status : 404,
+                        msg : `no article found with an article_id of ${article_id}`
+                    })
+                }
+                return rows[0]
+            }).then(() => {
+            return db.query(sqlQuery, [article_id, username, body])
+        }).then(({rows}) => {
+            return rows[0]
+        })
 }

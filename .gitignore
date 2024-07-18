@@ -1,4 +1,4 @@
 node_modules
 .env.*
-ticket-6.sql
-ticket-6.txt
+ticket.sql
+ticket.txt
