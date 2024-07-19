@@ -1,4 +1,4 @@
-const {fetchTopics, fetchArticleById, fetchAllArticles, selectCommentsByArticleId, joinCommentToArticle, updateVotes, deleteCommentByCommentId} = require("../models/models");
+const {fetchTopics, fetchArticleById, fetchAllArticles, selectCommentsByArticleId, joinCommentToArticle, updateVotes, deleteCommentByCommentId, fetchAllUsers} = require("../models/models");
 const endpoints = require("../endpoints.json")
 
 exports.getTopics  = (request, response, next) => {
@@ -70,6 +70,15 @@ exports.removeCommentByCommentId = (request, response, next) => {
     return deleteCommentByCommentId(comment_id).then(() => {
         response.status(204).send()
     }).catch((err) => {
+        next(err)
+    });
+};
+
+exports.getAllUsers  = (request, response, next) => {
+    fetchAllUsers().then((users) => {
+        response.status(200).send({users : users})
+    }).catch((err) => {
+        console.log(err)
         next(err)
     });
 };
