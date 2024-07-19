@@ -226,6 +226,7 @@ describe("POST", () => {
                     .expect(201)
                     .then((response) => {
                         const comment = response.body.comment
+                        console.log(comment)
                         expect(comment).toEqual({
                                 comment_id: 19,
                                 body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
@@ -327,13 +328,84 @@ describe("POST", () => {
         });
     });
 
+})
+
+describe("PATCH", () => {
+    describe("VOTES", () => {
+        describe("/api/articles/:article_id", () => {
+            describe("status 200", () => {
+                test("updates the votes property in the given article by the value given in the request body", () => {
+                    const newVote = {
+                        inc_votes : 5
+                    }
+                    return request(app)
+                    .patch("/api/articles/1")
+                    .send(newVote)
+                    .expect(200)
+                    .then((response) => {
+                        expect(response.body.article.votes).toBe(105)
+                    })
+                })
+            })
 
 
+            describe("Error handling", () => {
+                describe("status 400", () => {
+                    test("returns status code 400 when given an invalid article ID (incorrect data type)", () => {
+                        const newVote = {
+                            inc_votes : 5
+                        }
+                        return request(app)
+                        .patch("/api/articles/number-one")
+                        .send(newVote)
+                        .expect(400)
+                        .then(({body}) => {
+                            expect(body.msg).toBe("bad request")
+                        })
+
+                    })
+
+                    test("returns status code 400 when given an invalid inc_votes property (incorrect data type - not a number)", () => {
+                        const newVote = {
+                            inc_votes : "five"
+                        }
+                        return request(app)
+                        .patch("/api/articles/1")
+                        .send(newVote)
+                        .expect(400)
+                        .then((response) => {
+                            expect(response.body.msg).toBe("bad request")
+                        })
+
+                    })
+
+                })
+
+                describe("status 404", () => {
+                    test("", () => {
+                        const newVote = {
+                            inc_votes : "five"
+                        }
+                        return request(app)
+                        .patch("/api/articles/948")
+                        .send(newVote)
+                        .expect(404)
+                        .then(({body}) => {
+                            expect(body.msg).toBe("no article found with an article_id of 948")
+                        })
+                    })
+                })
+
+
+            })
+
+        })
+    })
 
 })
 
 
-
+            
 
 
 

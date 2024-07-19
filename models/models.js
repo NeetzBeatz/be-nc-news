@@ -82,4 +82,13 @@ exports.joinCommentToArticle = (article_id, username, body) => {
         }).then(({rows}) => {
             return rows[0]
         })
+};
+
+exports.updateVotes = (patchRequestVotes, article_id) => {
+
+    return this.fetchArticleById(article_id).then(() => {
+        return db.query(`UPDATE articles SET votes = votes +$1 WHERE article_id = $2 RETURNING *;`, [patchRequestVotes, article_id]).then(({rows})=> {
+            return rows[0]
+        })
+    })
 }
