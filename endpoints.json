@@ -60,5 +60,37 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:article_id/comments" : {
+    "description": "responds with the comment associated with the given article_id",
+    "queries": [],
+    "exampleResponse": {
+      "comment": [
+        {
+          "comment_id": 19,
+          "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          "article_id": 4,
+          "author": "butter_bridge",
+          "votes": 0,
+          "created_at": "2024-07-19T11:34:37.197Z"
+        }
+      ]
+    }
+  },
+  "PATCH /api/articles/:article_id" : {
+    "description": "updates the votes property in the given article by the value given in the request body",
+    "queries": [],
+    "exampleResponse": {
+      "comment": [
+        {
+          "comment_id": 19,
+          "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          "article_id": 4,
+          "author": "butter_bridge",
+          "votes": 0,
+          "created_at": "2024-07-19T11:34:37.197Z"
+        }
+      ]
+    }
   }
 }
