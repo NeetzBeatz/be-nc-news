@@ -226,7 +226,6 @@ describe("POST", () => {
                     .expect(201)
                     .then((response) => {
                         const comment = response.body.comment
-                        console.log(comment)
                         expect(comment).toEqual({
                                 comment_id: 19,
                                 body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
@@ -331,6 +330,7 @@ describe("POST", () => {
 })
 
 describe("PATCH", () => {
+
     describe("VOTES", () => {
         describe("/api/articles/:article_id", () => {
             describe("status 200", () => {
@@ -382,7 +382,7 @@ describe("PATCH", () => {
                 })
 
                 describe("status 404", () => {
-                    test("", () => {
+                    test("returns status 404 when given a valid but non existent ID", () => {
                         const newVote = {
                             inc_votes : "five"
                         }
@@ -407,7 +407,41 @@ describe("PATCH", () => {
 
             
 
+describe("DELETE", () => {
 
+    describe("COMMENTS", () => {
+        describe("/api/comments/:comment_id", () => {
 
+            describe("status 204", () => {
+                test("responds with status 204 and no comment when the given comment (identified by provided comment_id) is deleted", () => {
+                    return request(app)
+                    .delete("/api/comments/5")
+                    .expect(204)
+                })
+            })
 
-
+            describe("Error handling", () => {
+                describe("status 400", () => {
+                    test("responds with status 400 when given an invalid comment_id", () => {
+                        return request(app)
+                        .delete("/api/comments/number-five")
+                        .expect(400)
+                        .then(({body}) => {
+                            expect(body.msg).toBe("bad request")
+                        })
+                    })
+                })
+                describe("status 404", () => {
+                    test("responds with status 404 when given a valid but non-existent comment_id", () => {
+                        return request(app)
+                        .delete("/api/comments/99")
+                        .expect(404)
+                        .then(({body}) => {
+                            expect(body.msg).toBe("no article found with a comment_id of 99")
+                        })
+                    })
+                })
+            })
+        })
+    })
+})
