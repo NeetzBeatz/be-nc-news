@@ -107,3 +107,9 @@ exports.deleteCommentByCommentId = (comment_id) => {
             WHERE comment_id=$1;`, [comment_id])
     })
 };
+
+exports.fetchAllUsers = (request, response, next) => {
+    return db.query(`SELECT * FROM users`).then((users) => {
+        return users;
+    });
+};

@@ -1,5 +1,5 @@
 const express = require("express");
-const {getTopics, getEndpoints, getArticleById, getAllArticles, getCommentsByArticleId, addCommentToArticle, incrementVotes, removeCommentByCommentId} = require("./controllers/controllers");
+const {getTopics, getEndpoints, getArticleById, getAllArticles, getCommentsByArticleId, addCommentToArticle, incrementVotes, removeCommentByCommentId, getAllUsers} = require("./controllers/controllers");
 
 const app = express();
 
@@ -15,12 +15,16 @@ app.get("/api/articles", getAllArticles);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
+app.get("/api/users", getAllUsers)
+
+
 app.post("/api/articles/:article_id/comments", addCommentToArticle);
+
 
 app.patch("/api/articles/:article_id", incrementVotes)
 
+
 app.delete("/api/comments/:comment_id", removeCommentByCommentId)
-// console.log("hello from app.js")
 
 // To capture all bad URLs
 

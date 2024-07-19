@@ -41,7 +41,7 @@ describe("GET", () =>{
 
     describe("TOPICS", () => {
         describe("/api/topics", () => {
-            test("NOT PASSING should respond with status code 200 and an array of topic objects with keys of 'slug' and 'description'", () => {
+            test("should respond with status code 200 and an array of topic objects with keys of 'slug' and 'description'", () => {
                 return request(app)
                 .get("/api/topics")
                 .expect(200)
@@ -207,6 +207,23 @@ describe("GET", () =>{
             })
         });
     });
+
+    describe("USERS", () => {
+        describe("/api/users", () => {
+            test("should respond with status code 200 and an array of user objects with keys of 'username', 'name' and 'avatar_url'", () => {
+                return request(app)
+                .get("/api/users")
+                .expect(200)
+                .then(({body}) => {
+                    const responseData = body.users.rows
+                    expect(typeof responseData).toBe("object");
+                    expect(responseData.length).toBe(4);
+                });
+            });
+
+        })
+    })
+
 
 });
 
