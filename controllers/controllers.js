@@ -1,5 +1,6 @@
 const {fetchTopics, fetchArticleById, fetchAllArticles, selectCommentsByArticleId, joinCommentToArticle, updateVotes, deleteCommentByCommentId, fetchAllUsers} = require("../models/models");
-const endpoints = require("../endpoints.json")
+const endpoints = require("../endpoints.json");
+const { checkForTopic } = require("../db/seeds/utils");
 
 exports.getTopics  = (request, response, next) => {
     fetchTopics().then((topics) => {
@@ -15,16 +16,25 @@ exports.getEndpoints = (request, response, next) => {
 
 exports.getArticleById = (request, response, next) => {
     const {article_id} = request.params
-        fetchArticleById(article_id).then((article) => {
-            response.status(200).send({article : article})
-        }).catch((err) => {
-            next(err);
-        });
+    return fetchArticleById(article_id).then((article) => {
+        response.status(200).send({article : article})
+    })
+    .catch((err) => {
+        next(err);
+    });
 };
 
 exports.getAllArticles = (request, response, next) => {
-    fetchAllArticles().then((articles) => {
-        response.status(200).send({articles : articles})
+    const {sort_by, order, topic} = request.query
+    Promise.resolve().then(() => {
+        if (topic){
+            return checkForTopic(topic)
+        }
+    })
+    .then(() => {
+        return fetchAllArticles(sort_by, order, topic)
+    }).then((articles) => {
+        return response.send({articles : articles})
     }).catch((err) => {
         next(err);
     });
@@ -32,15 +42,15 @@ exports.getAllArticles = (request, response, next) => {
 
 exports.getCommentsByArticleId = (request, response, next) => {
     const {article_id} = request.params
-    return fetchArticleById(article_id)
-    .then((article) => {
-        const fetchedArticleId = article.article_id
-    return selectCommentsByArticleId(article_id)
-    }).then((comments) => {
+    const articlePromise = fetchArticleById(article_id)
+    const commentPromise = selectCommentsByArticleId(article_id)
+    
+    Promise.all([articlePromise, commentPromise])
+    .then(([article, comments]) => {
         response.status(200).send({comments : comments})
     }).catch((err) => {
         next(err);
-    });
+    });        
 };
 
 exports.addCommentToArticle = (request, response, next) => {
@@ -78,7 +88,6 @@ exports.getAllUsers  = (request, response, next) => {
     fetchAllUsers().then((users) => {
         response.status(200).send({users : users})
     }).catch((err) => {
-        console.log(err)
         next(err)
     });
 };

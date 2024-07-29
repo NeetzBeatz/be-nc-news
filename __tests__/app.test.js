@@ -61,20 +61,21 @@ describe("GET", () =>{
     describe("ARTICLE ID", () => {
         describe("/api/articles/:article_id", () => {
             describe("status 200", () => {
-                    test("responds with an article object when given a valid article_id. The object should have properties of: author, title, article_id, body, topic, created_at, votes and article_img_url", () => {
+                    test("responds with an article object when given a valid article_id. The object should now include comment count as an additional property", () => {
                         return request(app)
                         .get("/api/articles/1")
                         .expect(200)
                         .then((response) => {
-                            expect(response.body.article).toEqual({
-                                article_id: 1,
-                                title: 'Living in the shadow of a great man',
-                                topic: 'mitch',
-                                author: 'butter_bridge',
-                                body: 'I find this existence challenging',
-                                created_at: '2020-07-09T20:11:00.000Z',
-                                votes: 100,
-                                article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+                            expect(response.body.article).toMatchObject({
+                                article_id: expect.any(Number),
+                                title: expect.any(String),
+                                topic: expect.any(String),
+                                author: expect.any(String),
+                                body: expect.any(String),
+                                created_at: expect.any(String),
+                                votes: expect.any(Number),
+                                article_img_url: expect.any(String),
+                                comment_count: expect.any(Number)
                             })
                         })
                     })
@@ -126,12 +127,87 @@ describe("GET", () =>{
                                     comment_count: expect.any(Number)
                                 });
                                 expect(responseData).toBeSortedBy("created_at", {descending : true})
-                                expect(responseData.length).toBe(5)
+                                expect(responseData.length).toBe(13)
                             });
                     });
                 });
             });
         });
+
+        describe("/api/articles?sort_by=topic", () => {
+            test("responds with the articles ordered by the given topic", () => {
+                return request(app)
+                .get("/api/articles?sort_by=topic")
+                .expect(200)
+                .then((response)=> {
+                    const body = response.body.articles
+                    expect(body).toBeSortedBy("topic", {descending: true})
+                    expect(Array.isArray(body)).toBe(true)
+                })
+            })
+
+            test("responds with the array of article objects when no topic is given", () => {
+                return request(app)
+                .get("/api/articles?topic=")
+                .expect(200)
+                .then((response)=> {
+                    const body = response.body.articles
+                    expect(Array.isArray(body)).toBe(true)
+                })
+            })
+
+            test("status 404 - when a topic of the right data type doesnt exist", () => {
+                return request(app)
+                .get("/api/articles?topic=topicNotFound")
+                .expect(404)
+                .then((response)=> {
+                    const body = response.body.articles
+                    expect(response.body.msg).toBe("no topicNotFound topic found")
+                })
+            })            
+        })
+
+        describe("/api/articles?order=asc", () => {
+            test("responds with the articles ordered by the given order", () => {
+                return request(app)
+                .get("/api/articles?order=asc")
+                .expect(200)
+                .then((response)=> {
+                        expect(response.body.articles).toBeSortedBy("created_at", {ascending: true})
+                        expect(response.body.articles).not.toHaveProperty("body")
+                })                
+            })
+
+            test("status 400 - invalid order given", () => {
+                return request(app)
+                .get("/api/articles?order=invalid")
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("bad request")
+                })
+            });
+        })
+
+        describe("/api/articles sorting queries", () => {
+            test("responds with the articles sorted by the given column name - if valid", () => {
+                return request(app)
+                .get("/api/articles?sort_by=author")
+                .expect(200)
+                .then((response)=> {
+                    expect(response.body.articles).toBeSortedBy("author", {descending: true})
+                    expect(response.body.articles).not.toHaveProperty("body")
+                })                    
+            })
+
+            test("status 400 - invalid sort_by given", () => {
+                return request(app)
+                .get("/api/articles?sort_by=invalid")
+                .expect(400)
+                .then(({body}) => {
+                    expect(body.msg).toBe("bad request")
+                })
+            });
+        })
     });
 
 
@@ -167,18 +243,15 @@ describe("GET", () =>{
                     });
                 });
 
-                // test("responds with an empty array when given a valid ID that has no associated comments", () => {
-                //     return request(app)
-                //     .get("/api/articles/2/comments")
-                //     .expect(200)
-                //     .then(({body}) => {
-                //         const comments = body.comments
-                //         console.log(body)
-                //         expect(comments).toEqual([])
-              
-                //     });
-                // });
-
+                test("responds with an empty array when given a valid ID that has no associated comments", () => {
+                    return request(app)
+                    .get("/api/articles/2/comments")
+                    .expect(200)
+                    .then(({body}) => {
+                        const comments = body.comments
+                        expect(comments).toEqual([])
+                    });
+                });
             });
 
             describe("Error handling", () => {
@@ -205,6 +278,7 @@ describe("GET", () =>{
                 })
 
             })
+
         });
     });
 
@@ -223,9 +297,8 @@ describe("GET", () =>{
 
         })
     })
-
-
 });
+
 
 describe("POST", () => {
 
@@ -346,6 +419,7 @@ describe("POST", () => {
 
 })
 
+
 describe("PATCH", () => {
 
     describe("VOTES", () => {
@@ -421,8 +495,6 @@ describe("PATCH", () => {
 
 })
 
-
-            
 
 describe("DELETE", () => {
 
